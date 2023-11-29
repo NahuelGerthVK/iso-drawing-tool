@@ -5,10 +5,7 @@
 //     - landscape 1920x1080
 //     - fullscreen
 // - Change perspective
-// - switch between color schemes
-//     - (blue, green, purple)
 // - select individual colors
-//     - Background Color
 //     - Individual colors (bg, top, left, right)
 // - Input modes
 //     - draw (check)
@@ -48,6 +45,9 @@ let sketchProps = {
 
 
 // V A R I A B L E S
+
+// export
+let exporting = false; // export state
 
 // font variable
 let font;
@@ -140,12 +140,12 @@ function draw() {
   // switch between color palettes
   if (sketchProps.colorPalette === 'Pink-Blue') {
 
-    frontColor = 'white';
-    backColor = '#C4C4C4'; // grey
-    leftColor = '#00009d'; // dark blue
-    rightColor = '#0000fe'; // blue
-    topColor = 'fuchsia';
-    bottomColor = '#fff'; // white
+    frontColor = fcrWhite;
+    backColor = fcrPink;
+    leftColor = fcrPink;
+    rightColor = fcrBlue; // backup: #0000fe
+    topColor = fcrPink; // backup 'fuchsia' = #ff00ff
+    bottomColor = fcrPink;
     background(fcrBlack);
 
   } else if (sketchProps.colorPalette === 'Purple') {
@@ -170,26 +170,35 @@ function draw() {
     background(fcrOrange);
 
   } else if (sketchProps.colorPalette === 'Blue') {
-    frontColor = '#0000fe'; // blue
-    backColor = '#0000fe'; // blue
-    leftColor = '#0000fe'; // blue
-    rightColor = '#0000fe'; // blue
-    topColor = '#0000fe'; // blue
-    bottomColor = '#0000fe'; // blue
+
+    frontColor = fcrBlue;
+    backColor = fcrBlue;
+    leftColor = fcrBlue;
+    rightColor = fcrWhite;
+    topColor = fcrPurple;
+    bottomColor = fcrBlue;
+    background(fcrBlue);
+
   } else if (sketchProps.colorPalette === 'Green') {
-    frontColor = '#00ff00'; // green
-    backColor = '#00ff00'; // green
-    leftColor = '#00ff00'; // green
-    rightColor = '#00ff00'; // green
-    topColor = '#00ff00'; // green
-    bottomColor = '#00ff00'; // green
+
+    frontColor = fcrWhite;
+    backColor = fcrGreen;
+    leftColor = fcrGreen;
+    rightColor = fcrPurple;
+    topColor = fcrGreen;
+    bottomColor = fcrGreen;
+    background(fcrGreen);
+
   } else if (sketchProps.colorPalette === 'Magenta') {
-    frontColor = '#ff00ff'; // magenta
-    backColor = '#ff00ff'; // magenta
-    leftColor = '#ff00ff'; // magenta
-    rightColor = '#ff00ff'; // magenta
-    topColor = '#ff00ff'; // magenta
-    bottomColor = '#ff00ff'; // magenta
+
+    frontColor = fcrPurple;
+    backColor = fcrMagenta;
+    leftColor = fcrMagenta;
+    rightColor = fcrWhite;
+    topColor = fcrMagenta;
+    bottomColor = fcrMagenta;
+    background(fcrMagenta);
+
   } else if (sketchProps.colorPalette === 'BW') {
     frontColor = '#fff'; // white
     backColor = '#fff'; // white
@@ -238,8 +247,8 @@ function draw() {
     }
   }
 
-  // show drawing grid canvas?
-  if (sketchProps.showGrid) {
+  // show drawing grid canvas? (hide when exporting)
+  if (sketchProps.showGrid && !exporting) {
     image(gridCanvas, canvasPos, canvasPos);
   }
   pop();
@@ -302,10 +311,13 @@ function draw() {
 
   }
 
-  // render draw canvas
-  blendMode(MULTIPLY);
-  image(inputCanvas, canvasPos, canvasPos);
-  blendMode(BLEND);
+  // show input drawing? (hide when exporting)
+  if (sketchProps.showGrid && !exporting) {
+    // render draw canvas
+    blendMode(MULTIPLY);
+    image(inputCanvas, canvasPos, canvasPos);
+    blendMode(BLEND);
+  }
 
   pop();
 
@@ -439,6 +451,41 @@ function resetGrid() {
   reset = true;
 }
 
+/* - - - F U N C T I O N : E X P O R T - - - */
+function exportJPG() {
+
+  // Set exporting state
+  exporting = true;
+
+  // Save the canvas as an image
+  setTimeout(() => {
+    saveCanvas('ISO_Grid_Illustration_' + getCurrentTimestamp(), 'jpg');
+    // Reset exporting state once the export is done
+    exporting = false;
+  }, 1000);
+
+}
+
+
+// or press 's' to save as .jpg
+function keyPressed() {
+  if (key === 's' || key === 'S') {
+    exportJPG();
+  }
+}
+
+// Get current timestamp
+function getCurrentTimestamp() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1; // January is 0
+  const day = now.getDate();
+  const hour = now.getHours();
+  const minute = now.getMinutes();
+  const second = now.getSeconds();
+  return `${year}-${month}-${day}-${hour}-${minute}-${second}`;
+}
+
 
 /* - - - F U N C T I O N : D R A W  S I N G L E  C O L O R E D  B O X - - - */
 
@@ -529,4 +576,9 @@ function setupDatGui() {
   f2.add(sketchProps, 'customBG').name('Custom BG?'); // Checkbox for custom background color
   f2.addColor(sketchProps, 'bgColor').name('Background'); // Color picker for background color
   f2.open(); // open folder
+
+  // add controlers to folder 3 (export)
+  f3.add(window, 'exportJPG').name('Export .jpg (or press s)'); // export button
+  f3.open(); // open folder
+
 }
