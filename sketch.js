@@ -573,8 +573,19 @@ function setupDatGui() {
   // f2.addColor(sketchProps, 'color'); // Color picker for color
   f2.add(sketchProps, 'drawingMode', sketchProps.drawingModes).name('Drawing mode'); // Dropdown menu for drawing mode
   f2.add(sketchProps, 'colorPalette', sketchProps.colorPalettes).name('Color palette'); // Dropdown menu for color palette
-  f2.add(sketchProps, 'customBG').name('Custom BG?'); // Checkbox for custom background color
-  f2.addColor(sketchProps, 'bgColor').name('Background'); // Color picker for background color
+  
+  // f2.add(sketchProps, 'customBG').name('Custom BG?'); // Checkbox for custom background color
+  // f2.addColor(sketchProps, 'bgColor').name('Background'); // Color picker for background color
+
+  // Add the customBG checkbox
+  f2.add(sketchProps, 'customBG').name('Custom BG?').onChange(function (value) {
+    // Show/hide the background color field based on the checkbox value
+    bgColorController.domElement.style.display = value ? 'block' : 'none';
+  });
+  // Add a reference to the background color controller
+  const bgColorController = f2.addColor(sketchProps, 'bgColor').name('Background');
+  bgColorController.domElement.style.display = 'none'; // Initially hide the background color field
+
   f2.open(); // open folder
 
   // add controlers to folder 3 (export)
