@@ -1,3 +1,27 @@
+// TO DO
+// - export section: jpg, single frames, webm Video 
+// - Format
+//     - square 900x900
+//     - landscape 1920x1080
+//     - fullscreen
+// - Change perspective
+// - switch between color schemes
+//     - (blue, green, purple)
+// - select individual colors
+//     - Background Color
+//     - Individual colors (bg, top, left, right)
+// - Input modes
+//     - draw (check)
+//     - text (check)
+//     - upload gif
+//     - upload image 
+// - Change animation styles
+//     - adjust speed 
+//     - rotate letter
+// - Export settings
+//     - drawing input to create a new animated web version
+
+
 // G U I
 let sketchProps = {
 
@@ -10,13 +34,13 @@ let sketchProps = {
   drawingModes: ['Draw', 'Text', 'Gif'], // drawing mode options
 
   inputText: "0", // if we render a number or letter, default value
+  textSize: 240, // text size
 
   // output (ISO)
-
-  // switch between color themes (blue, pink, green, purple)
-
-  // select individual colors
-  color: [255, 100, 100], // RGB array
+  colorPalette: 'Pink-Blue', // default color palette
+  colorPalettes: ['Pink-Blue', 'Purple', 'Orange', 'Blue', 'Green', 'Magenta', 'BW'], // chose your color palette
+  bgColor: '#000', // background color
+  customBG: false, // overwrite background color with custom color
 
   // change animation style
 
@@ -30,20 +54,19 @@ let font;
 
 let bild; // Bild
 
-// bg color
-//let bg = '#fff';
-let bg = '#161e4f';
-bg = 'black';
 
-// define colors
-let frontColor = 'white';
-let backColor = '#C4C4C4'; // grey
-let leftColor = '#00009d'; // dark blue
-let rightColor = '#0000fe'; // blue
-//let topColor = '#E958C6'; // contrast color
-let topColor = '#ff6c00'; // contrast color
-topColor = 'fuchsia';
-let bottomColor = '#fff'; // white
+// color palette variables
+let frontColor, backColor, leftColor, rightColor, topColor, bottomColor, bgColor;
+
+// color palette
+let fcrPurple = "#280D6E";
+let fcrBlack = "#181818";
+let fcrPink = "#EB57C7";
+let fcrBlue = "#0B0BFF";
+let fcrOrange = "#F88150";
+let fcrGreen = "#7AE089";
+let fcrMagenta = "#982E92";
+let fcrWhite = "#F8F8F8";
 
 // input canvases
 let gridCanvas; // grid canvas
@@ -76,7 +99,6 @@ function preload() {
 
   // load font
   font = loadFont("assets/EduFavorit-Medium.woff");
-  //font = loadFont("assets/Archia-Bold.otf");
 }
 
 // S E T U P
@@ -115,7 +137,72 @@ function setup() {
 // D R A W
 function draw() {
 
-  background(bg);
+  // switch between color palettes
+  if (sketchProps.colorPalette === 'Pink-Blue') {
+
+    frontColor = 'white';
+    backColor = '#C4C4C4'; // grey
+    leftColor = '#00009d'; // dark blue
+    rightColor = '#0000fe'; // blue
+    topColor = 'fuchsia';
+    bottomColor = '#fff'; // white
+    background(fcrBlack);
+
+  } else if (sketchProps.colorPalette === 'Purple') {
+
+    bgColor = fcrPurple;
+    frontColor = fcrPurple;
+    backColor = fcrPurple;
+    leftColor = fcrPurple;
+    rightColor = fcrWhite;
+    topColor = fcrPink;
+    bottomColor = fcrPurple;
+    background(fcrPurple);
+
+  } else if (sketchProps.colorPalette === 'Orange') {
+
+    frontColor = fcrOrange;
+    backColor = fcrOrange;
+    leftColor = fcrOrange;
+    rightColor = fcrPurple;
+    topColor = fcrWhite;
+    bottomColor = fcrOrange;
+    background(fcrOrange);
+
+  } else if (sketchProps.colorPalette === 'Blue') {
+    frontColor = '#0000fe'; // blue
+    backColor = '#0000fe'; // blue
+    leftColor = '#0000fe'; // blue
+    rightColor = '#0000fe'; // blue
+    topColor = '#0000fe'; // blue
+    bottomColor = '#0000fe'; // blue
+  } else if (sketchProps.colorPalette === 'Green') {
+    frontColor = '#00ff00'; // green
+    backColor = '#00ff00'; // green
+    leftColor = '#00ff00'; // green
+    rightColor = '#00ff00'; // green
+    topColor = '#00ff00'; // green
+    bottomColor = '#00ff00'; // green
+  } else if (sketchProps.colorPalette === 'Magenta') {
+    frontColor = '#ff00ff'; // magenta
+    backColor = '#ff00ff'; // magenta
+    leftColor = '#ff00ff'; // magenta
+    rightColor = '#ff00ff'; // magenta
+    topColor = '#ff00ff'; // magenta
+    bottomColor = '#ff00ff'; // magenta
+  } else if (sketchProps.colorPalette === 'BW') {
+    frontColor = '#fff'; // white
+    backColor = '#fff'; // white
+    leftColor = '#fff'; // white
+    rightColor = '#fff'; // white
+    topColor = '#fff'; // white
+    bottomColor = '#fff'; // white
+  }
+
+  // custom background color
+  if (sketchProps.customBG) {
+    background(sketchProps.bgColor);
+  }
 
 
   /* - - - D R A W  P R E V I O U S  S H A P E S - - - */
@@ -204,7 +291,7 @@ function draw() {
     inputCanvas.stroke(0);
     //inputCanvas.strokeWeight(5);
     //inputCanvas.textSize(map(sin(frameCount * 0.02), -1, 1, 50, 120));
-    inputCanvas.textSize(240);
+    inputCanvas.textSize(sketchProps.textSize);
     inputCanvas.text(sketchProps.inputText, 0, 0);
     inputCanvas.noStroke();
     inputCanvas.pop();
@@ -418,24 +505,28 @@ function drawColoredBox(size, frontColor, backColor, leftColor, rightColor, topC
 function setupDatGui() {
 
   let gui = new dat.GUI({ autoPlace: false }); // disable auto placement
-  gui.domElement.id = 'gui'; // give it an ID
-  document.body.appendChild(gui.domElement); // append it to the body
-  // document.getElementById('myContainer').appendChild(gui.domElement); // append to a specific div
+  //gui.domElement.id = 'gui'; // give it an ID
+  //document.body.appendChild(gui.domElement); // append it to the body
+  document.getElementById('gui').appendChild(gui.domElement); // append to a specific div
 
   // folders
   let f1 = gui.addFolder('Input (Drawing)');
-  let f2 = gui.addFolder('Output (ISO)');
+  let f2 = gui.addFolder('Output (ISO cubes)');
   let f3 = gui.addFolder('Export');
 
   // add controlers to folder 1 (input)
   f1.add(sketchProps, 'showGrid').name('Show drawing?'); // show the input grid?
   f1.add(sketchProps, 'gridSize', 2, 40).name('Box size'); // size of grid cells and ISO boxes
   f1.add(sketchProps, 'inputText').name('Type text'); // type text
+  f1.add(sketchProps, 'textSize', 10, 300).name('Text size'); // text size
   f1.add(window, 'resetGrid').name('Reset drawing'); // reset drawing canvas when clicked
   f1.open(); // open folder
 
   // add controlers to folder 2 (output)
   // f2.addColor(sketchProps, 'color'); // Color picker for color
-  f2.add(sketchProps, 'drawingMode', sketchProps.drawingModes); // Dropdown menu for drawing mode
+  f2.add(sketchProps, 'drawingMode', sketchProps.drawingModes).name('Drawing mode'); // Dropdown menu for drawing mode
+  f2.add(sketchProps, 'colorPalette', sketchProps.colorPalettes).name('Color palette'); // Dropdown menu for color palette
+  f2.add(sketchProps, 'customBG').name('Custom BG?'); // Checkbox for custom background color
+  f2.addColor(sketchProps, 'bgColor').name('Background'); // Color picker for background color
   f2.open(); // open folder
 }

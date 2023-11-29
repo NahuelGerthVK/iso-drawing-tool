@@ -8,11 +8,19 @@ canvas {
   display: block;
 }
 
+main {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* p5 sketch container */
-.p5-sketch {
+.sketch-container {
   width: 900px;
   height: 900px;
-  position: absolute;
+  position: relative;
 }
 
 /* p5 canvas */
@@ -24,40 +32,9 @@ canvas {
   top: 0;
 }
 
-/* p5 controls */
-#sketch-controls {
-  width: calc(100% - 2rem);
-  height: fit-content;
-  position: absolute;
-  z-index: 1;
-  bottom: 0;
-  /* background-color: blue; */
-  display: flex;
-  padding: 1rem;
-  gap: 1rem;
-  font-family: Arial, Helvetica, sans-serif;
-  justify-content: space-between;
-}
-
-#sketch-controls .left {
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem
-}
-
-#sketch-controls .input {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem
-}
-
-#sketch-controls span {
-  /* background-color: red; */
-}
-
 /* gui position */
 #gui {
-  position: fixed;
+  position: absolute;
   top: 900px;
   left: 900px;
   translate: calc(-100% - 1rem) calc(-100% - 2.2rem);
